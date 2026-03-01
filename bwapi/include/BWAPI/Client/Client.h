@@ -57,6 +57,7 @@ namespace BWAPI
     GameTable*  gameTable = nullptr;
     GameData*   liveData = nullptr;
     std::deque<std::unique_ptr<GameData>> frameQueue;
+    std::deque<std::unique_ptr<GameData>> freeFrameQueue;
     std::unique_ptr<GameData> activeFrame;
     std::unique_ptr<GameData> staticTemplate;
     bool asyncEnabled = false;
@@ -68,7 +69,7 @@ namespace BWAPI
     std::uint64_t asyncCopyCount = 0;
     std::uint64_t asyncIntentionalBlockMicros = 0;
     std::function<bool()> stepServerFrameHook;
-    
+
     bool connected = false;
   };
   extern Client BWAPIClient;

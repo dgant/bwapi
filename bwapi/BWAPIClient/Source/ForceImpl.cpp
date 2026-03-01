@@ -14,7 +14,7 @@ namespace BWAPI
   }
   void ForceImpl::setData(const GameData* data)
   {
-    self = data ? &(data->forces[id]) : nullptr;
+    self = &(data->forces[id]);
   }
   std::string ForceImpl::getName() const
   {

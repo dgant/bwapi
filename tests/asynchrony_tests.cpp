@@ -278,6 +278,6 @@ int main() {
     return 1;
   }
 
-  std::cout << "All async parity tests passed" << std::endl;
+  std::cout << "All asynchrony tests passed" << std::endl;
   return 0;
 }

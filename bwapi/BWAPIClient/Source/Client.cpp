@@ -169,6 +169,7 @@ namespace BWAPI
     liveData = nullptr;
     data = nullptr;
     frameQueue.clear();
+    freeFrameQueue.clear();
     activeFrame.reset();
     staticTemplate.reset();
 
@@ -202,7 +203,19 @@ namespace BWAPI
   void Client::queueCurrentFrame()
   {
     auto copyStart = std::chrono::steady_clock::now();
-    auto snapshot = std::make_unique<GameData>();
+    std::unique_ptr<GameData> snapshot;
+    if (!freeFrameQueue.empty())
+    {
+      snapshot = std::move(freeFrameQueue.front());
+      freeFrameQueue.pop_front();
+    }
+    else
+    {
+      snapshot = std::make_unique<GameData>();
+      if (staticTemplate)
+        std::memcpy(snapshot.get(), staticTemplate.get(), sizeof(GameData));
+    }
+
     if (!staticTemplate || liveData->frameCount == 0)
     {
       std::memcpy(snapshot.get(), liveData, sizeof(GameData));
@@ -285,6 +298,12 @@ namespace BWAPI
     if (!connected || BWAPI::BroodwarPtr == nullptr)
       return;
 
+    if (activeFrame)
+    {
+      freeFrameQueue.push_back(std::move(activeFrame));
+      activeFrame.reset();
+    }
+
     if (!asyncEnabled)
     {
       if (!stepServerFrame())
@@ -337,6 +356,7 @@ namespace BWAPI
   {
     asyncEnabled = enabled;
     frameQueue.clear();
+    freeFrameQueue.clear();
     activeFrame.reset();
     staticTemplate.reset();
     if (enabled && liveData != nullptr)

@@ -15,7 +15,7 @@ namespace BWAPI
   }
   void PlayerImpl::setData(GameData* data)
   {
-    self = data ? &(data->players[id]) : nullptr;
+    self = &(data->players[id]);
   }
   void PlayerImpl::clear()
   {

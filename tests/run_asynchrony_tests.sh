@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="/workspace/bwapi"
 OUT_DIR="$ROOT/tests/bin"
-OUT_EXE="$OUT_DIR/async_client_parity_test.exe"
+OUT_EXE="$OUT_DIR/asynchrony_tests.exe"
 WINE_BIN="${WINE_BIN:-/opt/wine-staging/bin/wine}"
 mkdir -p "$OUT_DIR"
 
@@ -15,7 +15,7 @@ i686-w64-mingw32-g++ -std=gnu++17 -O0 -g0 -pipe -static-libgcc -static-libstdc++
   -I"$ROOT/bwapi/BWAPIClient/Source" \
   -I"$ROOT/bwapi/BWAPILIB/Source" \
   -I"$ROOT/bwapi/Shared" \
-  "$ROOT/tests/async_client_parity_test.cpp" \
+  "$ROOT/tests/asynchrony_tests.cpp" \
   "$ROOT"/bwapi/BWAPIClient/Source/*.cpp \
   "$ROOT"/bwapi/BWAPILIB/Source/*.cpp \
   "$ROOT"/bwapi/BWAPILIB/UnitCommand.cpp \

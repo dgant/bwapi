@@ -12,6 +12,6 @@ namespace BWAPI
   }
   void BulletImpl::setData(const GameData* data)
   {
-    self = data ? &(data->bullets[index]) : nullptr;
+    self = &(data->bullets[index]);
   }
 }
