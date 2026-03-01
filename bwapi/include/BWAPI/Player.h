@@ -521,8 +521,8 @@ namespace BWAPI
     /// @returns Sight range of the provided unit type for this player.
     int sightRange(UnitType unit) const;
 
-    /// <summary>Retrieves the ground weapon cooldown of a unit type, taking the player's attack speed
-    /// upgrades into consideration.</summary>
+    /// <summary>Retrieves the ground weapon cooldown of a unit type, taking the player's attack
+    /// speed upgrades into consideration.</summary>
     ///
     /// <param name="unit">
     ///   The UnitType to retrieve the ground damage cooldown for.
