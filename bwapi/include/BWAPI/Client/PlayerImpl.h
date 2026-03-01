@@ -7,6 +7,7 @@
 
 namespace BWAPI
 {
+  struct GameData;
   class ForceInterface;
   typedef ForceInterface *Force;
 
@@ -17,6 +18,7 @@ namespace BWAPI
     public:
       PlayerData* self;
       Unitset units;
+      void setData(GameData* data);
       void clear();
       PlayerImpl(int id);
       virtual int getID() const override;

@@ -13,9 +13,14 @@ namespace BWAPI
 {
   UnitImpl::UnitImpl(int _id)
     : id(_id)
-    , self(&(BWAPI::BWAPIClient.data->units[_id]))
+    , self(nullptr)
   {
+    setData(BWAPI::BWAPIClient.data);
     clear();
+  }
+  void UnitImpl::setData(GameData* data)
+  {
+    self = data ? &(data->units[id]) : nullptr;
   }
   //--------------------------------------------- ISSUE COMMAND ----------------------------------------------
   bool UnitImpl::issueCommand(UnitCommand command)
