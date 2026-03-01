@@ -7,9 +7,14 @@
 namespace BWAPI
 {
   ForceImpl::ForceImpl(int _id)
-    : self( &(BWAPI::BWAPIClient.data->forces[_id]) )
+    : self(nullptr)
     , id(_id)
   {
+    setData(BWAPI::BWAPIClient.data);
+  }
+  void ForceImpl::setData(const GameData* data)
+  {
+    self = data ? &(data->forces[id]) : nullptr;
   }
   std::string ForceImpl::getName() const
   {

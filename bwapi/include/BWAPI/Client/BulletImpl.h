@@ -5,6 +5,7 @@
 
 namespace BWAPI
 {
+  struct GameData;
   class PlayerInterface;
   typedef PlayerInterface *Player;
 
@@ -16,6 +17,7 @@ namespace BWAPI
     public:
 
       BulletImpl(int index);
+      void setData(const GameData* data);
       virtual int getID() const override;
       virtual bool exists() const override;
       virtual Player getPlayer() const override;

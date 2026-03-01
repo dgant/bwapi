@@ -5,6 +5,7 @@
 
 namespace BWAPI
 {
+  struct GameData;
   class PlayerInterface;
   typedef PlayerInterface *Player;
 
@@ -22,6 +23,7 @@ namespace BWAPI
       UnitData* self;
       Unitset   connectedUnits;
       Unitset   loadedUnits;
+      void      setData(GameData* data);
       void      clear();
       void      saveInitialState();
 

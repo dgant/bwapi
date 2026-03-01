@@ -12,6 +12,7 @@
 #include <string>
 #include <cassert>
 #include <fstream>
+#include <stdexcept>
 
 #include <BWAPI/Unitset.h>
 
@@ -19,6 +20,7 @@ namespace BWAPI
 {
   GameImpl::GameImpl(GameData* _data)
     : data(_data)
+    , commandData(_data)
   {
     this->clearAll();
     for(int i = 0; i < 5; ++i)
@@ -32,18 +34,42 @@ namespace BWAPI
       bulletVector.push_back(BulletImpl(i));
     
     inGame = false;
+    bindDataPointers();
+  }
+  void GameImpl::setReadData(GameData* _data)
+  {
+    data = _data;
+    bindDataPointers();
+  }
+  void GameImpl::setCommandData(GameData* _data)
+  {
+    commandData = _data ? _data : data;
+  }
+  void GameImpl::bindDataPointers()
+  {
+    for (auto& v : forceVector)
+      v.setData(data);
+    for (auto& v : playerVector)
+      v.setData(data);
+    for (auto& v : unitVector)
+      v.setData(data);
+    for (auto& v : bulletVector)
+      v.setData(data);
+    for (int i = 0; i < static_cast<int>(regionArray.size()); ++i)
+      if (regionArray[i])
+        regionArray[i]->setData(data);
   }
   int GameImpl::addShape(const BWAPIC::Shape &s)
   {
-    assert(data->shapeCount < GameData::MAX_SHAPES);
-    data->shapes[data->shapeCount] = s;
-    return data->shapeCount++;
+    assert(commandData->shapeCount < GameData::MAX_SHAPES);
+    commandData->shapes[commandData->shapeCount] = s;
+    return commandData->shapeCount++;
   }
   int GameImpl::addString(const char* text)
   {
-    assert(data->stringCount < GameData::MAX_STRINGS);
-    StrCopy(data->strings[data->stringCount], text);
-    return data->stringCount++;
+    assert(commandData->stringCount < GameData::MAX_STRINGS);
+    StrCopy(commandData->strings[commandData->stringCount], text);
+    return commandData->stringCount++;
   }
   int GameImpl::addText(BWAPIC::Shape &s, const char* text)
   {
@@ -52,15 +78,15 @@ namespace BWAPI
   }
   int GameImpl::addCommand(const BWAPIC::Command &c)
   {
-    assert(data->commandCount < GameData::MAX_COMMANDS);
-    data->commands[data->commandCount] = c;
-    return data->commandCount++;
+    assert(commandData->commandCount < GameData::MAX_COMMANDS);
+    commandData->commands[commandData->commandCount] = c;
+    return commandData->commandCount++;
   }
   int GameImpl::addUnitCommand(BWAPIC::UnitCommand& c)
   {
-    assert(data->unitCommandCount < GameData::MAX_UNIT_COMMANDS);
-    data->unitCommands[data->unitCommandCount] = c;
-    return data->unitCommandCount++;
+    assert(commandData->unitCommandCount < GameData::MAX_UNIT_COMMANDS);
+    commandData->unitCommands[commandData->unitCommandCount] = c;
+    return commandData->unitCommandCount++;
   }
   Unit GameImpl::_unitFromIndex(int index)
   {
@@ -855,6 +881,9 @@ namespace BWAPI
   }
   void GameImpl::setLatCom(bool isEnabled)
   {
+    if (isEnabled && BWAPI::BWAPIClient.isAsync())
+      throw std::logic_error("Latency compensation is not compatible with BWAPI asynchronous mode.");
+
     int e=0;
     if (isEnabled) e=1;
     //update shared memory

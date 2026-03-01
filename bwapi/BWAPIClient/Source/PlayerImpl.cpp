@@ -8,9 +8,14 @@ namespace BWAPI
 {
   PlayerImpl::PlayerImpl(int _id)
     : id(_id)
-    , self( &(BWAPI::BWAPIClient.data->players[_id]) )
+    , self(nullptr)
   {
+    setData(BWAPI::BWAPIClient.data);
     clear();
+  }
+  void PlayerImpl::setData(GameData* data)
+  {
+    self = data ? &(data->players[id]) : nullptr;
   }
   void PlayerImpl::clear()
   {

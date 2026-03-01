@@ -2,9 +2,10 @@
 #include <BWAPI/Client.h>
 
 #include <iostream>
-#include <thread>
-#include <chrono>
 #include <string>
+#include <cstdlib>
+#include <algorithm>
+#include <windows.h>
 
 using namespace BWAPI;
 
@@ -20,12 +21,30 @@ void reconnect()
 {
   while(!BWAPIClient.connect())
   {
-    std::this_thread::sleep_for(std::chrono::milliseconds{ 1000 });
+    Sleep(1000);
   }
 }
 
 int main(int argc, const char* argv[])
 {
+  if (const char* asyncEnv = std::getenv("BWAPI_ASYNC"))
+  {
+    if (std::string(asyncEnv) == "1")
+    {
+      BWAPIClient.setAsync(true);
+      if (const char* capEnv = std::getenv("BWAPI_ASYNC_BUFFER"))
+        BWAPIClient.setAsyncFrameBufferCapacity(std::max(1, std::atoi(capEnv)));
+      if (const char* pumpEnv = std::getenv("BWAPI_ASYNC_PUMP_MS"))
+        BWAPIClient.setAsyncPumpMaxMillis(std::max(0, std::atoi(pumpEnv)));
+      if (const char* frame0Env = std::getenv("BWAPI_ASYNC_FRAME0_WAIT"))
+        BWAPIClient.setFrameZeroWait(std::string(frame0Env) != "0");
+      if (const char* unsafeEnv = std::getenv("BWAPI_ASYNC_UNSAFE"))
+        BWAPIClient.setAsyncUnsafe(std::string(unsafeEnv) == "1");
+      std::cout << "BWAPI async mode enabled (buffer=" << BWAPIClient.getAsyncFrameBufferCapacity()
+                << ", pump_ms=" << BWAPIClient.getAsyncPumpMaxMillis() << ")" << std::endl;
+    }
+  }
+
   std::cout << "Connecting..." << std::endl;;
   reconnect();
   while(true)
@@ -198,6 +217,10 @@ int main(int argc, const char* argv[])
 
       drawStats();
       Broodwar->drawTextScreen(300,0,"FPS: %f",Broodwar->getAverageFPS());
+      if (BWAPIClient.isAsync())
+      {
+        Broodwar->drawTextScreen(300, 16, "Async copy us: %.2f", BWAPIClient.getAsyncAverageCopyMicros());
+      }
 
       BWAPI::BWAPIClient.update();
       if (!BWAPI::BWAPIClient.isConnected())

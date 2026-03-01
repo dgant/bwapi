@@ -7,15 +7,18 @@
 
 namespace BWAPI
 {
+  struct GameData;
   class RegionImpl : public RegionInterface
   {
   private:
+    int id;
     RegionData* self;
     Regionset neighbors;
     BWAPI::Region closestAccessibleRgn = nullptr;
     BWAPI::Region closestInaccessibleRgn = nullptr;
   public:
     RegionImpl(int index);
+    void setData(GameData* data);
     void setNeighbors();
     virtual int getID() const override;
     virtual int getRegionGroupID() const override;

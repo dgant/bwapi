@@ -32,8 +32,10 @@ namespace BWAPI
       int addCommand(const BWAPIC::Command &c);
       void processInterfaceEvents();
       void clearAll();
+      void bindDataPointers();
 
       GameData* data;
+      GameData* commandData;
       std::vector<ForceImpl>  forceVector;
       std::vector<PlayerImpl> playerVector;
       std::vector<UnitImpl>   unitVector;
@@ -72,6 +74,8 @@ namespace BWAPI
       int addUnitCommand(BWAPIC::UnitCommand& c);
       bool inGame;
       GameImpl(GameData* data);
+      void setReadData(GameData* data);
+      void setCommandData(GameData* data);
       void onMatchStart();
       void onMatchEnd();
       void onMatchFrame();

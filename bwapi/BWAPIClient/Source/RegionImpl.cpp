@@ -4,8 +4,15 @@
 namespace BWAPI
 {
   RegionImpl::RegionImpl(int index)
-    : self ( &BWAPI::BWAPIClient.data->regions[index] )
-  { }
+    : id(index)
+    , self ( nullptr )
+  {
+    setData(BWAPI::BWAPIClient.data);
+  }
+  void RegionImpl::setData(GameData* data)
+  {
+    self = data ? &data->regions[id] : nullptr;
+  }
   void RegionImpl::setNeighbors()
   {
     int accessibleBestDist    = 99999;
